@@ -1,7 +1,3 @@
-# NimUseFullMacros
-## در این پروژه قرار است ماکرپهای مفیدی نپشته شود  هدف اولیه این است دولوپرهای c++و Rust  بتوانند با ساختار فکری زبان خودشان در Nim برنامه نویسی کنند.
-
-
 # TODO
 ## defult value of object field in c++
 ```
@@ -19,9 +15,11 @@ Point* = object
         y* {. dfv(0.0) .}:int
 
 createConstructor3(Point)
-# or createConstructor(create_Point,Point)
-# or $ConstructorCreate(Point)
+``` 
 
+instead of `createConstructor3(Point)` write  `createConstructor(create_Point,Point)` 
+or `$ConstructorCreate(Point)`
+``` 
 create_Point(x=1.23) 
 #[ or $ConstructorFind(Point)(x=1.23) 
 در این حالت ما از کامپایل تایم فانکشن برای کاهش تعداد سیمبول ها استفاده میکنیم این خط از کد معادل 
