@@ -14,10 +14,10 @@ Point* = object
         x* {. dfv(0.0) .}:float
         y* {. dfv(0.0) .}:int
 
-createConstructor3(Point)
+createConstructor(Point)
 ``` 
 
-instead of `createConstructor3(Point)` write  `createConstructor(create_Point,Point)` 
+instead of `createConstructor(Point)` write  `createConstructor(create_Point,Point)` 
 or `$ConstructorCreate(Point)`
 ``` 
 create_Point(x=1.23) 

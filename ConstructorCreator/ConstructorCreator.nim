@@ -7,7 +7,7 @@ import Basic
 
 import ../macroTool
 
-macro createConstructor3*(class:typed)=
+macro createConstructor*(class:typed)=
     echo class.treeRepr
     var parms = nnkFormalParams.newTree(
                     class,

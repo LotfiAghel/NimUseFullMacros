@@ -10,7 +10,7 @@ static:
     #echo getAst0(outputs.create_TestClass).treeRepr
     echo "0outputs-----------------------------------"
 
-createConstructor3(inputs.TestClass)
+createConstructor(inputs.TestClass)
 
 var t0=outputs.create_TestClass()
 var t1=create_TestClass()

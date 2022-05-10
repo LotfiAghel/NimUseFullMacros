@@ -39,7 +39,7 @@ proc getBaseIndent(node:NimNode):NimNode=
             result=newEmptyNode()
 
 
-macro createConstructor3(class:typed)=
+macro createConstructor(class:typed)=
     echo class.getImpl().treeRepr
     z = class.getImpl()
     echo "----"
@@ -114,7 +114,7 @@ proc someProcThatMayRunInCompileTime(): bool =
     # This branch is taken in the executable.
     result = false    
 
-createConstructor3(RenderComp)
+createConstructor(RenderComp)
 
 var tt=create_RenderComp((0.1,0.1),(0.0,0.0))
 echo tt.visible
