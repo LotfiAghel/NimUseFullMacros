@@ -32,3 +32,45 @@ proc someProcThatMayRunInCompileTime(): bool =
   else:
     # This branch is taken in the executable.
     result = false   
+
+
+template badNodeKind(n, f) =
+  error("Invalid node kind " & $n.kind & " for macros.`" & $f & "`", n)
+
+proc `$$$`*(node: NimNode): string =
+  ## Get the string of an identifier node.
+  case node.kind
+  of nnkPostfix:
+    result = node.basename.strVal & "*"
+  of nnkStrLit..nnkTripleStrLit, nnkCommentStmt, nnkSym, nnkIdent:
+    result = node.strVal
+  of nnkOpenSymChoice, nnkClosedSymChoice:
+    result = $node[0]
+  of nnkAccQuoted:
+    result = $node[0]
+  of nnkBracketExpr:
+    echo node.treeRepr
+    result = "__braketOpen__"
+    
+    for i in node:
+      result=result  & $$$i & "_sp_"
+    result=result & "__close__"
+  else:
+    badNodeKind node, "$$$"
+
+
+
+macro ECHO*(a:static[string])=
+  echo "----------------------------",a
+
+
+macro StaticFor*(idx:untyped, N: static[int],body:NimNode):NimNode=
+  echo "for"
+  var x:NimNode=newNimNode(nnkBlockType)
+  
+  for i in 0.. 3:
+    echo "macroo" , i
+    x.add(body)
+    #x.add(body)
+  return x
+  
