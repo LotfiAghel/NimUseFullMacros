@@ -4,7 +4,9 @@ import std/typetraits
 
 
 proc getReclist*(node:NimNode):NimNode=
-    return node[2][0][2]
+    if node[2][0].kind==nnkRefTy:
+      return node[2][0][2]
+      return node[2][2]
 
 macro echoAst*(class:typed)=
     echo class.getImpl().treeRepr

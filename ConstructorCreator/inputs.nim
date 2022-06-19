@@ -17,3 +17,5 @@ type
         value* {. dfv(create_TestStruct0(y=10)) .}: TestStruct0
         value1* : TestClass0
         value2* {. dfv(TestClass0(y:10)) .}:TestClass0
+
+
