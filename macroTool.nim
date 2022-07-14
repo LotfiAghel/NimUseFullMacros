@@ -2,11 +2,35 @@ import macros
 import typeinfo
 import std/typetraits
 
+proc findNodeType*(node:NimNode,kind:NimNodeKind):NimNode=
+  if node.kind==kind:
+      return node
+  for i in node.children:
+    var z=findNodeType(i,kind)
+    if not z.isNil:
+      return z
+  return nil
 
 proc getReclist*(node:NimNode):NimNode=
-    if node[2][0].kind==nnkRefTy:
+    echo node.treeRepr
+    if node.kind==nnkRecList:
+      return node
+    if node.kind==nnkRefTy:
+      return node[0].getReclist
+
+    if node.kind==nnkObjectTy:
+      return node[2].getReclist
+    
+    if node.kind==nnkTypeDef:
+      return node[2].getReclist
+
+    if node[2][0].kind==nnkRefTy or node[2][0].kind==nnkTypeDef:
+      echo node[2][0][2].treeRepr
       return node[2][0][2]
-      return node[2][2]
+      #return node[2][2]
+    echo "errorrr"
+    echo node.kind
+    echo node.treeRepr
 
 macro echoAst*(class:typed)=
     echo class.getImpl().treeRepr

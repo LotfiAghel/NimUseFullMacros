@@ -143,6 +143,10 @@ type
   PersonY=object    
     y*:int
 import std/tables
+
+proc getNode*(t:NimNode): NimNode =
+    return t.findNodeType(nnkPragma)[0]
+
 macro Create*(T: typedesc[type],x: varargs[untyped]): untyped =
     echo repr(x)
     var classBody=T.getImpl()
@@ -159,14 +163,26 @@ macro Create*(T: typedesc[type],x: varargs[untyped]): untyped =
         )
         mark[$(c[0])]=1
     echo classBody.treeRepr
-    for i in getReclist(classBody):
-        var tmp:NimNode
-        if(i[0].kind == nnkPragmaExpr and not mark.hasKey($(i[0][0].getBaseIndent))): #TODO check dfv exist not every pragma
+    echo "---===================--"
+    #dfvFinder.getNode()
+    #var body= getAst getAst0(dfvFinder)
+    #var dfvNode  = getNode( body)
+    #var dfvNode=quote(dfv)
+    for i in classBody.findNodeType(nnkRecList):
+        echo "---==--"
+        #echo dfvNode
+        echo i.treeRepr
+        var tmp=i.findNodeType(nnkPragmaExpr)
+        var posifix=i.findNodeType(nnkPostfix)
+        if not tmp.isNil and not mark.hasKey($(posifix.getBaseIndent)): #TODO check dfv exist not every pragma
             echo i[0][1][0][1].treeRepr
-            result0.add nnkExprColonExpr.newTree(
-                            i[0][0].getBaseIndent,
-                            i[0][1][0][1]
-                        )
+            var pragma=i.findNodeType(nnkPragma).findNodeType(nnkCall)
+            
+            if $pragma[0] == "dfv": #TODO string always is bad moust found way to check  pragma[0] == sumFunction(dfv) 
+                result0.add nnkExprColonExpr.newTree(
+                                posifix.getBaseIndent,
+                                pragma[1]
+                            )
      
     echo result.treeRepr
     result=result0
