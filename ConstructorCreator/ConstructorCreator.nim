@@ -146,16 +146,39 @@ import std/tables
 
 proc getNode*(t:NimNode): NimNode =
     return t.findNodeType(nnkPragma)[0]
+#macro Create*(T0: typedesc[type],x: varargs[untyped]): untyped =
+{.experimental: "dynamicBindSym".}
+proc fn_signature(fn: NimNode): NimNode =
+  echo "fn_signature"  
+  return   fn.bindSym()
 
-macro Create*(T: typedesc[type],x: varargs[untyped]): untyped =
+  
+
+macro Create*(T0: untyped,x: varargs[untyped]): untyped =
     echo repr(x)
-    var classBody=T.getImpl()
-    var result0=nnkObjConstr.newTree(
+    #echo dfv.bindSym(rule=brForceOpen)
+    var T=T0
+    echo "echo T.treeRepr"
+    echo T.treeRepr
+    if T.kind==nnkBracketExpr:
+        echo "thats generic2"
+        
+        result=nnkBracketExpr.newTree(T,T[1])
+        T=fn_signature(T[0])
+        echo T
+    else:
+        result=nnkObjConstr.newTree(
             T,
-    )
+        )    
+    var classBody=T.getImpl()
+    echo classBody.treeRepr
+    
+
+    
+
     var mark=initTable[string,int]()
     for c in x.children:
-        result0.add(
+        result.add(
             nnkExprColonExpr.newTree(
                 c[0],                
                 c[1]
@@ -164,6 +187,7 @@ macro Create*(T: typedesc[type],x: varargs[untyped]): untyped =
         mark[$(c[0])]=1
     echo classBody.treeRepr
     echo "---===================--"
+    
     #dfvFinder.getNode()
     #var body= getAst getAst0(dfvFinder)
     #var dfvNode  = getNode( body)
@@ -179,13 +203,13 @@ macro Create*(T: typedesc[type],x: varargs[untyped]): untyped =
             var pragma=i.findNodeType(nnkPragma).findNodeType(nnkCall)
             
             if $pragma[0] == "dfv": #TODO string always is bad moust found way to check  pragma[0] == sumFunction(dfv) 
-                result0.add nnkExprColonExpr.newTree(
+                result.add nnkExprColonExpr.newTree(
                                 posifix.getBaseIndent,
                                 pragma[1]
                             )
      
-    echo result.treeRepr
-    result=result0
+    #echo result.treeRepr
+    #result=result
     
         
     
