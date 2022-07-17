@@ -152,7 +152,23 @@ proc fn_signature(fn: NimNode): NimNode =
   echo "fn_signature"  
   return   fn.bindSym()
 
-  
+proc addFileds(classBody:NimNode,result:NimNode,mark:Table[string,int])=
+   for i in classBody.findNodeType(nnkRecList):
+        echo "---==--"
+        #echo dfvNode
+        echo i.treeRepr
+        var tmp=i.findNodeType(nnkPragmaExpr)
+        var posifix=i.findNodeType(nnkPostfix)
+        if not tmp.isNil and not mark.hasKey($(posifix.getBaseIndent)): #TODO check dfv exist not every pragma
+            echo i[0][1][0][1].treeRepr
+            var pragma=i.findNodeType(nnkPragma).findNodeType(nnkCall)
+            
+            if $pragma[0] == "dfv": #TODO string always is bad moust found way to check  pragma[0] == sumFunction(dfv) 
+                result.add nnkExprColonExpr.newTree(
+                                posifix.getBaseIndent,
+                                pragma[1]
+                            )  
+
 
 macro Create*(T0: untyped,x: varargs[untyped]): untyped =
     echo repr(x)
@@ -188,25 +204,16 @@ macro Create*(T0: untyped,x: varargs[untyped]): untyped =
     echo classBody.treeRepr
     echo "---===================--"
     
+    var ofInherit=classBody.findNodeType(nnkOfInherit)
+    if not ofInherit.isNil:
+        echo ofInherit[0].getImpl().treeRepr
+        ofInherit[0].getImpl().addFileds(result,mark)
+    
     #dfvFinder.getNode()
     #var body= getAst getAst0(dfvFinder)
     #var dfvNode  = getNode( body)
     #var dfvNode=quote(dfv)
-    for i in classBody.findNodeType(nnkRecList):
-        echo "---==--"
-        #echo dfvNode
-        echo i.treeRepr
-        var tmp=i.findNodeType(nnkPragmaExpr)
-        var posifix=i.findNodeType(nnkPostfix)
-        if not tmp.isNil and not mark.hasKey($(posifix.getBaseIndent)): #TODO check dfv exist not every pragma
-            echo i[0][1][0][1].treeRepr
-            var pragma=i.findNodeType(nnkPragma).findNodeType(nnkCall)
-            
-            if $pragma[0] == "dfv": #TODO string always is bad moust found way to check  pragma[0] == sumFunction(dfv) 
-                result.add nnkExprColonExpr.newTree(
-                                posifix.getBaseIndent,
-                                pragma[1]
-                            )
+    classBody.addFileds(result,mark)
      
     #echo result.treeRepr
     #result=result
