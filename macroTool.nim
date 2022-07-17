@@ -47,6 +47,8 @@ proc getBaseIndent*(node:NimNode):NimNode=
             result = node.basename
         of nnkSym:
             result = node
+        of nnkIdent:
+            result = node
         else:
             result=newEmptyNode()
 

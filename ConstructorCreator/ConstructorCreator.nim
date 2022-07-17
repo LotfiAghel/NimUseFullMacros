@@ -159,6 +159,10 @@ proc addFileds(classBody:NimNode,result:NimNode,mark:Table[string,int])=
         echo i.treeRepr
         var tmp=i.findNodeType(nnkPragmaExpr)
         var posifix=i.findNodeType(nnkPostfix)
+        echo "..........."
+        if posifix.isNil:
+            posifix=i.findNodeType(nnkIdent)
+        echo posifix.treeRepr
         if not tmp.isNil and not mark.hasKey($(posifix.getBaseIndent)): #TODO check dfv exist not every pragma
             echo i[0][1][0][1].treeRepr
             var pragma=i.findNodeType(nnkPragma).findNodeType(nnkCall)
