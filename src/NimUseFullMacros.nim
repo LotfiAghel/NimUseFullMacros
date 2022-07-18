@@ -1,0 +1,3 @@
+import NimUseFullMacros/ConstructorCreator/ConstructorCreator
+export ConstructorCreator
+
