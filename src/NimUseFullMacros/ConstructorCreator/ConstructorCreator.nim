@@ -153,6 +153,11 @@ proc fn_signature(fn: NimNode): NimNode =
   return   fn.bindSym()
 
 proc addFileds(classBody:NimNode,result:NimNode,mark:Table[string,int])=
+   var ofInherit=classBody.findNodeType(nnkOfInherit)
+   if not ofInherit.isNil:
+        echo ofInherit[0].getImpl().treeRepr
+        ofInherit[0].getImpl().addFileds(result,mark)
+        
    for i in classBody.findNodeType(nnkRecList):
         echo "---==--"
         #echo dfvNode
@@ -208,10 +213,7 @@ macro Create*(T0: untyped,x: varargs[untyped]): untyped =
     echo classBody.treeRepr
     echo "---===================--"
     
-    var ofInherit=classBody.findNodeType(nnkOfInherit)
-    if not ofInherit.isNil:
-        echo ofInherit[0].getImpl().treeRepr
-        ofInherit[0].getImpl().addFileds(result,mark)
+   
     
     #dfvFinder.getNode()
     #var body= getAst getAst0(dfvFinder)
