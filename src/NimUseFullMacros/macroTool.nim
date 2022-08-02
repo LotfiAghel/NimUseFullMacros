@@ -11,6 +11,15 @@ proc findNodeType*(node:NimNode,kind:NimNodeKind):NimNode=
       return z
   return nil
 
+proc findNodeTypeList*(node:NimNode,kind:NimNodeKind):seq[NimNode]=
+  if node.kind==kind:
+      result.add node
+  for i in node.children:
+    var zl=findNodeTypeList(i,kind)
+    for z in zl:
+      result.add z
+  
+
 proc getReclist*(node:NimNode):NimNode=
     echo node.treeRepr
     if node.kind==nnkRecList:
